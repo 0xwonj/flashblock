@@ -2,7 +2,10 @@ module flashblock
 
 go 1.24.0
 
-require github.com/ethereum/go-ethereum v1.15.5
+require (
+	github.com/ethereum/go-ethereum v1.15.5
+	gopkg.in/yaml.v2 v2.4.0
+)
 
 require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect

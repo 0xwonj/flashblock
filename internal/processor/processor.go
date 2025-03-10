@@ -71,7 +71,7 @@ func (bp *BlockProcessor) Start(ctx context.Context) {
 func (bp *BlockProcessor) processNextBlock() {
 	// Start measuring block creation time
 	startTime := time.Now()
-	
+
 	// Get all transactions from mempool
 	transactions := bp.mempool.GetAllTransactions()
 

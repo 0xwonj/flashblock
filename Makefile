@@ -4,6 +4,7 @@
 BINARY_NAME=flashblock
 BUILD_DIR=./build
 MAIN_FILE=./cmd/server/main.go
+CLIENT_FILE=./cmd/client/main.go
 EXAMPLE_DIR=./examples
 
 # Get Go version from go.mod
@@ -13,6 +14,7 @@ build:
 	@echo "Building ${BINARY_NAME}..."
 	@mkdir -p ${BUILD_DIR}
 	go build -o ${BUILD_DIR}/${BINARY_NAME} ${MAIN_FILE}
+	go build -o ${BUILD_DIR}/client ${CLIENT_FILE}
 	@echo "Build complete: ${BUILD_DIR}/${BINARY_NAME}"
 
 run: build
@@ -22,6 +24,10 @@ run: build
 run-custom: build
 	@echo "Running ${BINARY_NAME} with custom flags..."
 	${BUILD_DIR}/${BINARY_NAME} --rpc-addr=:8888 --api-addr=:8889 --block-interval=500ms
+
+run-client:
+	@echo "Running client..."
+	${BUILD_DIR}/client
 
 test:
 	@echo "Running tests..."
@@ -60,13 +66,6 @@ build-examples:
 	go build -o ${BUILD_DIR}/client ${EXAMPLE_DIR}/client.go
 	go build -o ${BUILD_DIR}/ws_client ${EXAMPLE_DIR}/ws_client/main.go
 
-run-client: build-examples
-	@echo "Running HTTP client example..."
-	${BUILD_DIR}/client
-
-run-ws-client: build-examples
-	@echo "Running WebSocket client example..."
-	${BUILD_DIR}/ws_client
 
 # Default target
 all: build 

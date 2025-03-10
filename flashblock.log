@@ -1,0 +1,27 @@
+2025/03/11 06:55:28.342007 Starting FlashBlock server...
+2025/03/11 06:55:28.342219 Metrics initialized
+2025/03/11 06:55:28.342228 Mempool initialized
+2025/03/11 06:55:28.342233 Block processor initialized with interval: 250ms
+2025/03/11 06:55:28.342241 JSON-RPC server initialized with address: :8080
+2025/03/11 06:55:28.342273 System is ready. Press Ctrl+C to stop.
+2025/03/11 06:55:28.342292 Block processor started with interval: 250ms
+2025/03/11 06:55:28.343274 JSON-RPC server listening on :8080 (HTTP and WebSocket)
+2025/03/11 06:55:28.746789 Shutting down...
+2025/03/11 06:55:28.746867 Shutting down JSON-RPC server...
+2025/03/11 06:55:28.746879 Block processor stopped
+2025/03/11 06:55:29.747961 Server stopped
+2025/03/11 06:55:32.200991 Starting FlashBlock server...
+2025/03/11 06:55:32.201137 Metrics initialized
+2025/03/11 06:55:32.201146 Mempool initialized
+2025/03/11 06:55:32.201154 Block processor initialized with interval: 250ms
+2025/03/11 06:55:32.201166 JSON-RPC server initialized with address: :8080
+2025/03/11 06:55:32.201182 System is ready. Press Ctrl+C to stop.
+2025/03/11 06:55:32.201199 Block processor started with interval: 250ms
+2025/03/11 06:55:32.201711 JSON-RPC server listening on :8080 (HTTP and WebSocket)
+2025/03/11 06:55:34.702299 Block created: ID=6a07686c62f7a0ee1023075d081be546133bd045b21451a8f3e445b5481433c3, Transactions=3, Creation Time=45.167µs
+2025/03/11 06:55:34.952309 Block created: ID=2dd7c99ae68f84163093ac142de958236bd5c98f09bfc7f19cd3dfb58e0ceb85, Transactions=5, Creation Time=44.417µs
+2025/03/11 06:55:35.202307 Block created: ID=06daebb93cc60f12feaf576d650a92fa8f8d5d70cd3c8f578984c3cd132854e1, Transactions=2, Creation Time=27.209µs
+2025/03/11 06:56:16.197796 Shutting down...
+2025/03/11 06:56:16.199048 Shutting down JSON-RPC server...
+2025/03/11 06:56:16.199048 Block processor stopped
+2025/03/11 06:56:17.200098 Server stopped

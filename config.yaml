@@ -1,13 +1,13 @@
 # Workload configuration for the client
 
 # Number of concurrent clients
-num_clients: 5
+num_clients: 500
 
 # Requests per second per client
 requests_per_second: 10
 
 # Total duration of the test in seconds
-duration_seconds: 60
+duration_seconds: 180
 
 # Server URL
 server_url: "http://localhost:8080" 

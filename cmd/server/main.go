@@ -23,7 +23,7 @@ func main() {
 		rpcAddr        = flag.String("rpc-addr", ":8080", "JSON-RPC server address")
 		blockInterval  = flag.Duration("block-interval", 250*time.Millisecond, "Block creation interval")
 		logBlockEvents = flag.Bool("log-blocks", true, "Log block creation events")
-		logFile        = flag.String("log-file", "flashblock.log", "Log file path")
+		logFile        = flag.String("log-file", "logs/flashblock.log", "Log file path")
 	)
 	flag.Parse()
 

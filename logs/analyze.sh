@@ -5,13 +5,12 @@ echo "Building log analyzer..."
 mkdir -p bin
 go build -o bin/analyze cmd/analyze/main.go
 
-# Determine log prefix based on VM_TYPEironment
-# You can set VM_TYPE=tdx or VM_TYPE=legacy as an VM_TYPEironment variable
+# Determine log prefix based on environment
 VM_TYPE=${VM_TYPE:-legacy} # Default to legacy if not set
 echo "Using environment: $VM_TYPE"
 
 # Define log file suffixes
-LOG_SUFFIXES=("5_10_60.log" "10_50_180.log" "20_50_180.log" "100_10_180.log" "500_10_180.log")
+LOG_SUFFIXES=("5_10.log" "10_50.log" "20_50.log" "100_10.log" "500_10.log")
 
 # Create array of log files with appropriate prefix
 LOG_FILES=()

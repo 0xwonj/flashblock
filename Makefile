@@ -17,7 +17,7 @@ build:
 
 run-server:
 	@echo "Running ${BINARY_NAME}..."
-	${BUILD_DIR}/${BINARY_NAME}
+	sudo ${BUILD_DIR}/${BINARY_NAME}
 
 run-client:
 	@echo "Running client..."

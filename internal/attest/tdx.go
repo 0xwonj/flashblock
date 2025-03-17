@@ -19,6 +19,11 @@ func NewTDXProvider() (*TDXProvider, error) {
 		return nil, fmt.Errorf("failed to get quote provider: %v", err)
 	}
 
+	err = quoteProvider.IsSupported()
+	if err != nil {
+		return nil, fmt.Errorf("failed to check TDX support: %v", err)
+	}
+
 	return &TDXProvider{
 		provider: quoteProvider,
 	}, nil

@@ -24,7 +24,7 @@ func main() {
 		blockInterval  = flag.Duration("block-interval", 250*time.Millisecond, "Block creation interval")
 		logBlockEvents = flag.Bool("log-blocks", true, "Log block creation events")
 		logFile        = flag.String("log-file", "logs/flashblock.log", "Log file path")
-		enableTDXQuote = flag.Bool("enable-tdx-quote", false, "Enable TDX attestation quote generation for blocks")
+		enableTDXQuote = flag.Bool("enable-tdx-quote", true, "Enable TDX attestation quote generation for blocks")
 	)
 	flag.Parse()
 

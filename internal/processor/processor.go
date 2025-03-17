@@ -57,6 +57,8 @@ func New(mempool *mempool.Mempool, config *Config) *BlockProcessor {
 		provider, err := attest.NewTDXProvider()
 		if err != nil {
 			log.Printf("Warning: Failed to initialize TDX provider: %v. TDX quotes will be disabled.", err)
+			// Disable TDX quote generation if not supported
+			bp.config.EnableTDXQuote = false
 		} else {
 			bp.tdxProvider = provider
 			log.Println("TDX quote provider initialized successfully")

@@ -44,7 +44,7 @@ func main() {
 	defer file.Close()
 
 	// Regular expression to extract creation time - updated to match format "28.081µs"
-	creationTimeRegex := regexp.MustCompile(`Creation Time=(\d+\.?\d*)µs`)
+	creationTimeRegex := regexp.MustCompile(`Creation Time=(\d+\.?\d*)(µs|ms|s)`)
 	
 	var creationTimes []float64
 	scanner := bufio.NewScanner(file)
@@ -53,11 +53,21 @@ func main() {
 		line := scanner.Text()
 		if strings.Contains(line, "Block created") {
 			matches := creationTimeRegex.FindStringSubmatch(line)
-			if len(matches) == 2 {
+			if len(matches) == 3 {
 				timeValue, err := strconv.ParseFloat(matches[1], 64)
 				if err != nil {
 					log.Printf("Failed to parse time value: %v", err)
 					continue
+				}
+				
+				// Convert to microseconds based on unit
+				switch matches[2] {
+				case "ms":
+					timeValue *= 1000 // Convert milliseconds to microseconds
+				case "s":
+					timeValue *= 1000000 // Convert seconds to microseconds
+				case "µs":
+					// Already in microseconds
 				}
 				
 				creationTimes = append(creationTimes, timeValue)
@@ -246,7 +256,7 @@ func analyzeByTransactionCount(w io.Writer, logFilePath string) {
 	defer file.Close()
 
 	transactionRegex := regexp.MustCompile(`Transactions=(\d+)`)
-	creationTimeRegex := regexp.MustCompile(`Creation Time=(\d+\.?\d*)µs`)
+	creationTimeRegex := regexp.MustCompile(`Creation Time=(\d+\.?\d*)(µs|ms|s)`)
 	
 	transactionGroups := make(map[int][]float64)
 	scanner := bufio.NewScanner(file)
@@ -258,7 +268,7 @@ func analyzeByTransactionCount(w io.Writer, logFilePath string) {
 			transMatches := transactionRegex.FindStringSubmatch(line)
 			timeMatches := creationTimeRegex.FindStringSubmatch(line)
 			
-			if len(transMatches) == 2 && len(timeMatches) == 2 {
+			if len(transMatches) == 2 && len(timeMatches) == 3 {
 				transCount, err := strconv.Atoi(transMatches[1])
 				if err != nil {
 					continue
@@ -267,6 +277,16 @@ func analyzeByTransactionCount(w io.Writer, logFilePath string) {
 				timeValue, err := strconv.ParseFloat(timeMatches[1], 64)
 				if err != nil {
 					continue
+				}
+				
+				// Convert to microseconds based on unit
+				switch timeMatches[2] {
+				case "ms":
+					timeValue *= 1000 // Convert milliseconds to microseconds
+				case "s":
+					timeValue *= 1000000 // Convert seconds to microseconds
+				case "µs":
+					// Already in microseconds
 				}
 				
 				transactionGroups[transCount] = append(transactionGroups[transCount], timeValue)

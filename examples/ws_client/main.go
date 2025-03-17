@@ -40,7 +40,7 @@ type TransactionInfo struct {
 	Timestamp time.Time `json:"timestamp"`
 }
 
-// JSON-RPC request for subscription
+// SubscribeRequest represents a JSON-RPC request for subscription
 type SubscribeRequest struct {
 	JSONRPC string        `json:"jsonrpc"`
 	ID      int           `json:"id"`

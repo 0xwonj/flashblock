@@ -45,7 +45,7 @@ type SubscribeRequest struct {
 	JSONRPC string        `json:"jsonrpc"`
 	ID      int           `json:"id"`
 	Method  string        `json:"method"`
-	Params  []interface{} `json:"params"`
+	Params  []any         `json:"params"`
 }
 
 func main() {
@@ -147,7 +147,7 @@ func doBatchRequests(client *rpc.Client, txID string) {
 		},
 		{
 			Method: "flash_getTransactionStatus",
-			Args:   []interface{}{map[string]string{"id": txID}},
+			Args:   []any{map[string]string{"id": txID}},
 			Result: &txStatusResult,
 		},
 	}

@@ -4,7 +4,7 @@
 BINARY_NAME=flashblock
 BUILD_DIR=./bin
 MAIN_FILE=./cmd/server/main.go
-
+CLIENT_FILE=./cmd/client/main.go
 # Get Go version from go.mod
 GO_VERSION=$(shell grep -E "^go [0-9]+\.[0-9]+(\.[0-9]+)?" go.mod | cut -d " " -f 2)
 
@@ -12,9 +12,10 @@ build:
 	@echo "Building ${BINARY_NAME}..."
 	@mkdir -p ${BUILD_DIR}
 	go build -o ${BUILD_DIR}/${BINARY_NAME} ${MAIN_FILE}
+	go build -o ${BUILD_DIR}/client ${CLIENT_FILE}
 	@echo "Build complete: ${BUILD_DIR}/${BINARY_NAME}"
 
-run-server: build
+run-server:
 	@echo "Running ${BINARY_NAME}..."
 	${BUILD_DIR}/${BINARY_NAME}
 

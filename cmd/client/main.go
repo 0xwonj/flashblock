@@ -54,7 +54,7 @@ type TransactionInfo struct {
 
 func main() {
 	// Parse command-line flags
-	configFile := flag.String("config", "config.yaml", "Path to the configuration file")
+	configFile := flag.String("config", "cmd/client/workload.yaml", "Path to the configuration file")
 	flag.Parse()
 
 	// Load configuration

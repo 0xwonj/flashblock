@@ -12,6 +12,7 @@ type Block struct {
 	Transactions []*Transaction `json:"transactions"`
 	Timestamp    time.Time      `json:"timestamp"`
 	PrevBlockID  string         `json:"prev_block_id"`
+	TDXQuote     []byte         `json:"tdx_quote,omitempty"`
 }
 
 // NewBlock creates a new block with the given transactions and previous block ID

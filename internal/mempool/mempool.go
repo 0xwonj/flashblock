@@ -79,11 +79,15 @@ func (mp *Mempool) GetAllTransactions() []*model.Transaction {
 	mp.mu.RLock()
 	defer mp.mu.RUnlock()
 
-	transactions := make([]*model.Transaction, 0, len(mp.transactions))
+	// Create a slice to hold transactions
+	txs := make([]*model.Transaction, 0, len(mp.transactions))
+
+	// Add all transactions to the slice
 	for _, tx := range mp.transactions {
-		transactions = append(transactions, tx)
+		txs = append(txs, tx)
 	}
-	return transactions
+
+	return txs
 }
 
 // GetSortedTransactions returns all transactions sorted by priority (high to low)
@@ -98,12 +102,12 @@ func (mp *Mempool) GetSortedTransactions() []*model.Transaction {
 	return transactions
 }
 
-// RemoveTransactions removes the specified transactions from the mempool
-func (mp *Mempool) RemoveTransactions(txIDs []string) {
+// RemoveTransactions removes transactions with the given IDs from the mempool
+func (mp *Mempool) RemoveTransactions(ids []string) {
 	mp.mu.Lock()
 	defer mp.mu.Unlock()
 
-	for _, id := range txIDs {
+	for _, id := range ids {
 		delete(mp.transactions, id)
 	}
 }

@@ -45,10 +45,10 @@ func main() {
 
 	// Regular expression to extract creation time - updated to match format "28.081µs"
 	creationTimeRegex := regexp.MustCompile(`Creation Time=(\d+\.?\d*)(µs|ms|s)`)
-	
+
 	var creationTimes []float64
 	scanner := bufio.NewScanner(file)
-	
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.Contains(line, "Block created") {
@@ -59,7 +59,7 @@ func main() {
 					log.Printf("Failed to parse time value: %v", err)
 					continue
 				}
-				
+
 				// Convert to microseconds based on unit
 				switch matches[2] {
 				case "ms":
@@ -69,7 +69,7 @@ func main() {
 				case "µs":
 					// Already in microseconds
 				}
-				
+
 				creationTimes = append(creationTimes, timeValue)
 			}
 		}
@@ -101,7 +101,7 @@ func main() {
 	fmt.Fprintf(output, "Standard Deviation: %.3f µs\n", stdDev)
 	fmt.Fprintf(output, "95th Percentile: %.3f µs\n", p95)
 	fmt.Fprintf(output, "99th Percentile: %.3f µs\n", p99)
-	
+
 	// Print histogram
 	fmt.Fprintln(output, "\nCreation Time Distribution (µs):")
 	printHistogram(output, creationTimes, 10)
@@ -114,10 +114,10 @@ func minMax(values []float64) (float64, float64) {
 	if len(values) == 0 {
 		return 0, 0
 	}
-	
+
 	min := values[0]
 	max := values[0]
-	
+
 	for _, v := range values {
 		if v < min {
 			min = v
@@ -126,7 +126,7 @@ func minMax(values []float64) (float64, float64) {
 			max = v
 		}
 	}
-	
+
 	return min, max
 }
 
@@ -134,12 +134,12 @@ func calculateMean(values []float64) float64 {
 	if len(values) == 0 {
 		return 0
 	}
-	
+
 	var sum float64
 	for _, v := range values {
 		sum += v
 	}
-	
+
 	return sum / float64(len(values))
 }
 
@@ -147,18 +147,18 @@ func calculateMedian(values []float64) float64 {
 	if len(values) == 0 {
 		return 0
 	}
-	
+
 	// Create a copy to avoid modifying the original slice
 	sorted := make([]float64, len(values))
 	copy(sorted, values)
 	sort.Float64s(sorted)
-	
+
 	middle := len(sorted) / 2
-	
+
 	if len(sorted)%2 == 0 {
 		return (sorted[middle-1] + sorted[middle]) / 2
 	}
-	
+
 	return sorted[middle]
 }
 
@@ -166,13 +166,13 @@ func calculateStdDev(values []float64, mean float64) float64 {
 	if len(values) <= 1 {
 		return 0
 	}
-	
+
 	var sumSquaredDiff float64
 	for _, v := range values {
 		diff := v - mean
 		sumSquaredDiff += diff * diff
 	}
-	
+
 	variance := sumSquaredDiff / float64(len(values))
 	return math.Sqrt(variance)
 }
@@ -181,12 +181,12 @@ func calculatePercentile(values []float64, percentile int) float64 {
 	if len(values) == 0 {
 		return 0
 	}
-	
+
 	// Create a copy to avoid modifying the original slice
 	sorted := make([]float64, len(values))
 	copy(sorted, values)
 	sort.Float64s(sorted)
-	
+
 	index := int(math.Ceil(float64(percentile)/100.0*float64(len(sorted)))) - 1
 	// Ensure index is within bounds
 	if index < 0 {
@@ -194,7 +194,7 @@ func calculatePercentile(values []float64, percentile int) float64 {
 	} else if index >= len(sorted) {
 		index = len(sorted) - 1
 	}
-	
+
 	return sorted[index]
 }
 
@@ -202,15 +202,15 @@ func printHistogram(w io.Writer, values []float64, bins int) {
 	if len(values) == 0 || bins <= 0 {
 		return
 	}
-	
+
 	min, max := minMax(values)
-	
+
 	// Add a small buffer to max to ensure the highest value falls within a bin
 	max += 0.001
-	
+
 	binWidth := (max - min) / float64(bins)
 	histogram := make([]int, bins)
-	
+
 	// Count values in each bin
 	for _, v := range values {
 		binIndex := int((v - min) / binWidth)
@@ -220,7 +220,7 @@ func printHistogram(w io.Writer, values []float64, bins int) {
 		}
 		histogram[binIndex]++
 	}
-	
+
 	// Find the maximum count for scaling
 	maxCount := 0
 	for _, count := range histogram {
@@ -228,20 +228,20 @@ func printHistogram(w io.Writer, values []float64, bins int) {
 			maxCount = count
 		}
 	}
-	
+
 	// Print the histogram
 	maxBarWidth := 50
 	for i := 0; i < bins; i++ {
 		lowerBound := min + float64(i)*binWidth
 		upperBound := min + float64(i+1)*binWidth
 		count := histogram[i]
-		
+
 		// Calculate bar width
 		var barWidth int
 		if maxCount > 0 {
 			barWidth = count * maxBarWidth / maxCount
 		}
-		
+
 		bar := strings.Repeat("█", barWidth)
 		fmt.Fprintf(w, "%7.1f - %7.1f µs | %4d | %s\n", lowerBound, upperBound, count, bar)
 	}
@@ -257,28 +257,28 @@ func analyzeByTransactionCount(w io.Writer, logFilePath string) {
 
 	transactionRegex := regexp.MustCompile(`Transactions=(\d+)`)
 	creationTimeRegex := regexp.MustCompile(`Creation Time=(\d+\.?\d*)(µs|ms|s)`)
-	
+
 	transactionGroups := make(map[int][]float64)
 	scanner := bufio.NewScanner(file)
-	
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.Contains(line, "Block created") {
 			// Extract transaction count
 			transMatches := transactionRegex.FindStringSubmatch(line)
 			timeMatches := creationTimeRegex.FindStringSubmatch(line)
-			
+
 			if len(transMatches) == 2 && len(timeMatches) == 3 {
 				transCount, err := strconv.Atoi(transMatches[1])
 				if err != nil {
 					continue
 				}
-				
+
 				timeValue, err := strconv.ParseFloat(timeMatches[1], 64)
 				if err != nil {
 					continue
 				}
-				
+
 				// Convert to microseconds based on unit
 				switch timeMatches[2] {
 				case "ms":
@@ -288,7 +288,7 @@ func analyzeByTransactionCount(w io.Writer, logFilePath string) {
 				case "µs":
 					// Already in microseconds
 				}
-				
+
 				transactionGroups[transCount] = append(transactionGroups[transCount], timeValue)
 			}
 		}
@@ -296,27 +296,27 @@ func analyzeByTransactionCount(w io.Writer, logFilePath string) {
 
 	if len(transactionGroups) > 0 {
 		fmt.Fprintln(w, "\nStatistics Grouped by Transaction Count:")
-		
+
 		// Process each transaction group
 		for transCount, times := range transactionGroups {
 			if len(times) <= 1 {
 				continue // Skip transaction counts with only one sample
 			}
-			
+
 			mean := calculateMean(times)
 			stdDev := calculateStdDev(times, mean)
 			min, max := minMax(times)
-			
+
 			fmt.Fprintf(w, "\nTransaction Count: %d (Blocks: %d)\n", transCount, len(times))
 			fmt.Fprintf(w, "  Min Creation Time: %.3f µs\n", min)
 			fmt.Fprintf(w, "  Max Creation Time: %.3f µs\n", max)
 			fmt.Fprintf(w, "  Mean Creation Time: %.3f µs\n", mean)
 			fmt.Fprintf(w, "  Std Deviation: %.3f µs\n", stdDev)
-			
+
 			if len(times) >= 20 { // Only show histogram for transaction counts with sufficient samples
 				fmt.Fprintf(w, "\n  Creation Time Distribution:\n")
 				printHistogram(w, times, 8)
 			}
 		}
 	}
-} 
+}

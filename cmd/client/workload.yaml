@@ -1,5 +1,3 @@
-# Workload configuration for the client
-
 # Number of concurrent clients
 num_clients: 500
 

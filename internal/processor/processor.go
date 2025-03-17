@@ -6,6 +6,7 @@ import (
 	"sort"
 	"time"
 
+	"flashblock/internal/attest"
 	"flashblock/internal/mempool"
 	"flashblock/internal/model"
 )
@@ -17,13 +18,15 @@ type BlockProcessor struct {
 	processedBlocks []*model.Block
 	blockCallback   func(*model.Block, time.Duration)
 	config          *Config
+	tdxProvider     *attest.TDXProvider // TDX provider for quote generation
 }
 
 // Config holds configuration for the block processor
 type Config struct {
 	Interval        time.Duration
 	BlockCallback   func(*model.Block, time.Duration)
-	MaxStoredBlocks int // Maximum number of recent blocks to keep in memory
+	MaxStoredBlocks int  // Maximum number of recent blocks to keep in memory
+	EnableTDXQuote  bool // Whether to generate TDX quotes for blocks
 }
 
 // DefaultConfig returns the default configuration
@@ -31,6 +34,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		Interval:        250 * time.Millisecond,
 		MaxStoredBlocks: 100, // Default to storing the 100 most recent blocks
+		EnableTDXQuote:  false,
 	}
 }
 
@@ -40,13 +44,26 @@ func New(mempool *mempool.Mempool, config *Config) *BlockProcessor {
 		config = DefaultConfig()
 	}
 
-	return &BlockProcessor{
+	bp := &BlockProcessor{
 		mempool:         mempool,
 		latestBlockID:   "",
 		processedBlocks: make([]*model.Block, 0),
 		blockCallback:   config.BlockCallback,
 		config:          config,
 	}
+
+	// Initialize TDX provider if quote generation is enabled
+	if config.EnableTDXQuote {
+		provider, err := attest.NewTDXProvider()
+		if err != nil {
+			log.Printf("Warning: Failed to initialize TDX provider: %v. TDX quotes will be disabled.", err)
+		} else {
+			bp.tdxProvider = provider
+			log.Println("TDX quote provider initialized successfully")
+		}
+	}
+
+	return bp
 }
 
 // Start begins the block processing loop
@@ -89,6 +106,11 @@ func (bp *BlockProcessor) processNextBlock() {
 	// Create a new block
 	block := model.NewBlock(transactions, bp.latestBlockID)
 
+	// Generate TDX quote if enabled
+	if bp.config.EnableTDXQuote && bp.tdxProvider != nil {
+		bp.generateTDXQuoteForBlock(block)
+	}
+
 	// Update latest block ID
 	bp.latestBlockID = block.ID
 
@@ -116,6 +138,22 @@ func (bp *BlockProcessor) processNextBlock() {
 	if bp.blockCallback != nil {
 		bp.blockCallback(block, blockCreationTime)
 	}
+}
+
+// generateTDXQuoteForBlock generates a TDX quote for the given block
+func (bp *BlockProcessor) generateTDXQuoteForBlock(block *model.Block) {
+	// Use block ID as user data for the quote
+	var quoteData []byte
+	var err error
+
+	quoteData, err = bp.tdxProvider.GetQuote([]byte(block.ID))
+	if err != nil {
+		log.Printf("Failed to generate TDX quote for block %s: %v", block.ID, err)
+		return
+	}
+
+	block.TDXQuote = quoteData
+	log.Printf("Generated TDX quote for block %s (%d bytes)", block.ID, len(quoteData))
 }
 
 // GetProcessedBlocks returns all blocks that have been processed

@@ -24,6 +24,7 @@ func main() {
 		blockInterval  = flag.Duration("block-interval", 250*time.Millisecond, "Block creation interval")
 		logBlockEvents = flag.Bool("log-blocks", true, "Log block creation events")
 		logFile        = flag.String("log-file", "logs/flashblock.log", "Log file path")
+		enableTDXQuote = flag.Bool("enable-tdx-quote", false, "Enable TDX attestation quote generation for blocks")
 	)
 	flag.Parse()
 
@@ -50,7 +51,8 @@ func main() {
 
 	// Create block processor
 	processorConfig := &processor.Config{
-		Interval: *blockInterval,
+		Interval:       *blockInterval,
+		EnableTDXQuote: *enableTDXQuote,
 	}
 
 	// Add block callback if logging is enabled
@@ -66,6 +68,10 @@ func main() {
 
 	bp := processor.New(mp, processorConfig)
 	log.Printf("Block processor initialized with interval: %v", *blockInterval)
+
+	if *enableTDXQuote {
+		log.Println("TDX quote generation is enabled")
+	}
 
 	// Create JSON-RPC server with metrics
 	rpcServer := rpc.NewServer(mp, *rpcAddr)

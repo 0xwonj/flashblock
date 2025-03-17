@@ -62,7 +62,7 @@ func (bp *BlockProcessor) Start(ctx context.Context) {
 			log.Println("Block processor stopped")
 			return
 		case <-ticker.C:
-			bp.processNextBlock()
+			go bp.processNextBlock()
 		}
 	}
 }
